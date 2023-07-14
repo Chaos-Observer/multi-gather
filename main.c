@@ -170,10 +170,17 @@ int main(int argc, char *argv[]){
 		// fp = fopen("./info.csv","w");
     }
 
-	fprintf(csv_fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n","TIME","BreathRate","HeartRate","HeartWave","BreathWave","HumanDet","BreathResult","MovementValue","RefHeartWave");
+	fprintf(csv_fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n","Date","Time","BreathRate","HeartRate","HeartWave","BreathWave","HumanDet","BreathResult","MovementValue","RefHeartWave");
 	fclose(csv_fp);
 
 	usleep(1000000); //wait radarData be malloc
+
+	char len[20] = {0};
+
+    time_t timep;
+    time(&timep);
+
+    struct tm *p;
 	
 	while(1){
 		// printf("main loop!\n");
@@ -242,30 +249,34 @@ int main(int argc, char *argv[]){
 		}else{
 			outValue->ref_heartWave = -1;
 		}
+
+		p = gmtime(&timep);
+
+    	snprintf(len, 20, "%d-%d-%d %02d:%02d:%02d", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday, 8 + p->tm_hour, p->tm_min, p->tm_sec);
 		
 		gettimeofday( &time_record, NULL );
 		int p_time = time_record.tv_sec*1000 + time_record.tv_usec/1000 ;
 
-		char outHeartWave[12],outBreathWave[12];
+		char outHeartWave[9],outBreathWave[9];
 
 		if((outValue->radar_heartWave[0]== 255) && (outValue->radar_heartWave[1]== 255) && (outValue->radar_heartWave[2]== 255))
 		{
-			snprintf(outHeartWave, 5, "NULL\n");
+			snprintf(outHeartWave, 5, "NULL");
 		}else{
-			snprintf(outHeartWave, 20, "%d:%d:%d:%d:%d\n",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
+			snprintf(outHeartWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
 		}
 
 		if((outValue->radar_breathWave[0]== 255) && (outValue->radar_breathWave[1]== 255) && (outValue->radar_breathWave[2]== 255))
 		{
-			snprintf(outBreathWave, 5, "NULL\n");
+			snprintf(outBreathWave, 5, "NULL");
 		}else{
-			snprintf(outBreathWave, 20, "%d:%d:%d:%d:%d\n",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
+			snprintf(outBreathWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
 		}
 		
 		if(outValue->ref_heartWave > 0){
 
 		csv_fp = fopen("infos.csv","a");
-		fprintf(csv_fp, "%d,%d,%d,%s,%s,%d,%d,%d,%d\n",p_time, \
+		fprintf(csv_fp, "%s,%d,%d,%d,%s,%s,%d,%d,%d,%d\n",len,p_time, \
 		outValue->radar_breathRate, \
 		outValue->radar_heartRate, \
 		outHeartWave, \
