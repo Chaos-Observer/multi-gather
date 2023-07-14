@@ -97,7 +97,7 @@ int *i2c_rx_date_opt(void){
 	setAddr_ADS1115(DEVICE_I2C_ADDR);
 	setGain(eGAIN_ONE);
     setMode(eMODE_SINGLE);       // single-shot mode
-    setRate(eRATE_250);          // 128SPS (default)
+    setRate(eRATE_128);          // 128SPS (default)
     setOSMode(eOSMODE_SINGLE);   // Set to start a single-conversion
 	while(1){
 		// printf("readreg,01:%02x,02:%02x,03:%02x\n",(uint16_t)readAdsReg(DEVICE_I2C_ADDR, 0x01),(uint16_t)readAdsReg(DEVICE_I2C_ADDR, 0x02),(uint16_t)readAdsReg(DEVICE_I2C_ADDR, 0x03));
@@ -252,14 +252,14 @@ int main(int argc, char *argv[]){
 		{
 			snprintf(outHeartWave, 5, "NULL\n");
 		}else{
-			snprintf(outHeartWave, 10, "%d:%d:%d:%d:%d\n",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
+			snprintf(outHeartWave, 20, "%d:%d:%d:%d:%d\n",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
 		}
 
 		if((outValue->radar_breathWave[0]== 255) && (outValue->radar_breathWave[1]== 255) && (outValue->radar_breathWave[2]== 255))
 		{
 			snprintf(outBreathWave, 5, "NULL\n");
 		}else{
-			snprintf(outBreathWave, 10, "%d:%d:%d:%d:%d\n",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
+			snprintf(outBreathWave, 20, "%d:%d:%d:%d:%d\n",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
 		}
 		
 		if(outValue->ref_heartWave > 0){
