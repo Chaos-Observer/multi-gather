@@ -162,22 +162,22 @@ int main(int argc, char *argv[]){
 	struct timeval time_record;
     gettimeofday( &time_record, NULL );
 
-	FILE *fp = fopen("./info.csv","w+");
+	FILE *csv_fp = fopen("infos.csv","w");
 
-	if (fp == NULL) {
-        // fprintf(stderr, "fopen() failed.\n");
-        system("touch ./info.csv");
-		printf("fopen() failed. touch file.\n");
-		fp = fopen("./info.csv","w+");
+	if (csv_fp == NULL) {
+        fprintf(stderr, "fopen() failed.\n");
+		exit(EXIT_FAILURE);
+		// fp = fopen("./info.csv","w");
     }
 
-	fprintf(fp, "TIME,BreathRate,HeartRate,HeartWave,BreathWave,HumanDet,BreathResult,MovementValue,RefHeartWave\n");
-	
+	fprintf(csv_fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s\n","TIME","BreathRate","HeartRate","HeartWave","BreathWave","HumanDet","BreathResult","MovementValue","RefHeartWave");
+	fclose(csv_fp);
+
 	usleep(1000000); //wait radarData be malloc
 	
 	while(1){
 		// printf("main loop!\n");
-		usleep(3000); 
+		usleep(10000); 
 		if(oldValue->radar_breathRate != radarData->breathe_rate){
 			oldValue->radar_breathRate = radarData->breathe_rate;
 			outValue->radar_breathRate = radarData->breathe_rate;
@@ -250,31 +250,36 @@ int main(int argc, char *argv[]){
 
 		if((outValue->radar_heartWave[0]== 255) && (outValue->radar_heartWave[1]== 255) && (outValue->radar_heartWave[2]== 255))
 		{
-			snprintf(outHeartWave, 4, "NULL\n");
+			snprintf(outHeartWave, 5, "NULL\n");
 		}else{
 			snprintf(outHeartWave, 10, "%d:%d:%d:%d:%d\n",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
 		}
 
 		if((outValue->radar_breathWave[0]== 255) && (outValue->radar_breathWave[1]== 255) && (outValue->radar_breathWave[2]== 255))
 		{
-			snprintf(outBreathWave, 4, "NULL\n");
+			snprintf(outBreathWave, 5, "NULL\n");
 		}else{
 			snprintf(outBreathWave, 10, "%d:%d:%d:%d:%d\n",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
 		}
 		
-		// fprintf(fp, "%d,%s,%s,%s,%s,%s,%s,%d\n",p_time, \
-		// outValue->radar_breathRate, \
-		// outValue->radar_heartRate, \
-		// outHeartWave, \
-		// outBreathWave, \
-		// outValue->radar_humanDet, \
-		// outValue->radar_breathResult, \
-		// outValue->radar_movementValue, \
-		// outValue->ref_heartWave);
+		if(outValue->ref_heartWave > 0){
+
+		csv_fp = fopen("infos.csv","a");
+		fprintf(csv_fp, "%d,%d,%d,%s,%s,%d,%d,%d,%d\n",p_time, \
+		outValue->radar_breathRate, \
+		outValue->radar_heartRate, \
+		outHeartWave, \
+		outBreathWave, \
+		outValue->radar_humanDet, \
+		outValue->radar_breathResult, \
+		outValue->radar_movementValue, \
+		outValue->ref_heartWave);
+		
+		fclose(csv_fp);
+		}
 
 	}
 	
-	fclose(fp);
-	printf("File fb Free.\n");
+	printf("File fp Free.\n");
 	return 0;
 }
