@@ -178,13 +178,13 @@ int main(int argc, char *argv[]){
 	char len[20] = {0};
 
     time_t timep;
-    time(&timep);
+    
 
     struct tm *p;
 	
 	while(1){
 		// printf("main loop!\n");
-		usleep(10000); 
+		usleep(50000); 
 		if(oldValue->radar_breathRate != radarData->breathe_rate){
 			oldValue->radar_breathRate = radarData->breathe_rate;
 			outValue->radar_breathRate = radarData->breathe_rate;
@@ -249,13 +249,14 @@ int main(int argc, char *argv[]){
 		}else{
 			outValue->ref_heartWave = -1;
 		}
-
+		
+		time(&timep);
 		p = gmtime(&timep);
 
     	snprintf(len, 20, "%d-%d-%d %02d:%02d:%02d", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday, 8 + p->tm_hour, p->tm_min, p->tm_sec);
 		
 		gettimeofday( &time_record, NULL );
-		int p_time = time_record.tv_sec*1000 + time_record.tv_usec/1000 ;
+		int p_time = time_record.tv_usec/1000;
 
 		char outHeartWave[9],outBreathWave[9];
 
@@ -276,6 +277,16 @@ int main(int argc, char *argv[]){
 		if(outValue->ref_heartWave > 0){
 
 		csv_fp = fopen("infos.csv","a");
+		// fprintf(csv_fp, "%s,%d,%d,%d,%s,%s,%d,%d,%d,%d\n",len,p_time, \
+		// outValue->radar_breathRate, \
+		// outValue->radar_heartRate, \
+		// outHeartWave, \
+		// outBreathWave, \
+		// outValue->radar_humanDet, \
+		// outValue->radar_breathResult, \
+		// outValue->radar_movementValue, \
+		// outValue->ref_heartWave);
+		
 		fprintf(csv_fp, "%s,%d,%d,%d,%s,%s,%d,%d,%d,%d\n",len,p_time, \
 		outValue->radar_breathRate, \
 		outValue->radar_heartRate, \
@@ -285,7 +296,7 @@ int main(int argc, char *argv[]){
 		outValue->radar_breathResult, \
 		outValue->radar_movementValue, \
 		outValue->ref_heartWave);
-		
+
 		fclose(csv_fp);
 		}
 
