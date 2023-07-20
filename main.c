@@ -258,22 +258,25 @@ int main(int argc, char *argv[]){
 		gettimeofday( &time_record, NULL );
 		int p_time = time_record.tv_usec/1000;
 
-		char outHeartWave[9],outBreathWave[9];
+		char outHeartWave[20],outBreathWave[20];
 
-		if((outValue->radar_heartWave[0]== 255) && (outValue->radar_heartWave[1]== 255) && (outValue->radar_heartWave[2]== 255))
-		{
-			snprintf(outHeartWave, 5, "NULL");
-		}else{
-			snprintf(outHeartWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
-		}
+		// if((outValue->radar_heartWave[0]== 255) && (outValue->radar_heartWave[1]== 255) && (outValue->radar_heartWave[2]== 255))
+		// {
+		// 	snprintf(outHeartWave, 5, "NULL");
+		// }else{
+		// 	snprintf(outHeartWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_heartWave[0],outValue->radar_heartWave[1],outValue->radar_heartWave[2],outValue->radar_heartWave[3],outValue->radar_heartWave[4] );
+		// }
 
-		if((outValue->radar_breathWave[0]== 255) && (outValue->radar_breathWave[1]== 255) && (outValue->radar_breathWave[2]== 255))
-		{
-			snprintf(outBreathWave, 5, "NULL");
-		}else{
-			snprintf(outBreathWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
-		}
-		
+		// if((outValue->radar_breathWave[0]== 255) && (outValue->radar_breathWave[1]== 255) && (outValue->radar_breathWave[2]== 255))
+		// {
+		// 	snprintf(outBreathWave, 5, "NULL");
+		// }else{
+		// 	snprintf(outBreathWave, 20, "%03d:%03d:%03d:%03d:%03d",outValue->radar_breathWave[0],outValue->radar_breathWave[1],outValue->radar_breathWave[2],outValue->radar_breathWave[3],outValue->radar_breathWave[4] );
+		// }
+
+		snprintf(outHeartWave, 20, "%03d:%03d:%03d:%03d:%03d\0",radarData->heartbeat_wave[0],radarData->heartbeat_wave[1],radarData->heartbeat_wave[2],radarData->heartbeat_wave[3],radarData->heartbeat_wave[4] );		
+		snprintf(outBreathWave, 20, "%03d:%03d:%03d:%03d:%03d\0",radarData->breathe_wave[0],radarData->breathe_wave[1],radarData->breathe_wave[2],radarData->breathe_wave[3],radarData->breathe_wave[4] );
+
 		if(outValue->ref_heartWave > 0){
 
 		csv_fp = fopen("infos.csv","a");
@@ -288,13 +291,13 @@ int main(int argc, char *argv[]){
 		// outValue->ref_heartWave);
 		
 		fprintf(csv_fp, "%s,%d,%d,%d,%s,%s,%d,%d,%d,%d\n",len,p_time, \
-		outValue->radar_breathRate, \
-		outValue->radar_heartRate, \
+		radarData->breathe_rate, \
+		radarData->heartbeat_rate, \
 		outHeartWave, \
 		outBreathWave, \
-		outValue->radar_humanDet, \
-		outValue->radar_breathResult, \
-		outValue->radar_movementValue, \
+		radarData->human_det, \
+		radarData->breathe_result, \
+		radarData->movement_value, \
 		outValue->ref_heartWave);
 
 		fclose(csv_fp);
